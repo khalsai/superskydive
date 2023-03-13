@@ -120,7 +120,7 @@
         <!-- Home -->
     
         <div class="home">
-            <div class="background_image" style="background-image:url({% static 'images/register.jpg' %})"></div>
+            <div class="background_image" style="background-image:url({% static 'images/login_skydive.jpg' %})"></div>
         </div>
     
         <!-- Register -->
@@ -135,20 +135,10 @@
                                 <form action="register" method="POST" class="home_search_form" id="home_search_form">
                                     {% csrf_token %}
                                         <div class="d-flex flex-column justify-content-start">
-                                            <label for="{{ register_form.first_name.id_for_label }}" class="search_input search_input_3">First Name<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.first_name  }}</div>
-                                            <label for="{{ register_form.last_name.id_for_label }}" class="search_input search_input_3">Last Name<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.last_name  }}</div>
-                                            <label for="{{ register_form.username.id_for_label }}" class="search_input search_input_3">Username<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.username  }}</div>
-                                            <label for="{{ register_form.password_.id_for_label }}" class="search_input search_input_3">Password<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.password  }}</div>
-                                            <label for="{{ register_form.password_repeat.id_for_label }}" class="search_input search_input_3">Confirm Password<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.password_repeat  }}</div>
-                                            <label for="{{ register_form.email.id_for_label }}" class="search_input search_input_3">Email<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.email  }}</div>
-                                            <label for="{{ register_form.phone_number.id_for_label }}" class="search_input search_input_3">Phone Number<span class="text-red">*</span>:</label>
-                                                <div>{{ register_form.phone_number  }}</div>
+                                            {{register_form}}
+                                         <div>
+                                             &nbsp;&nbsp;
+                                         </div>
                                         <input type="submit" class="home_search_button">
                                         </div>
                                 </form>
@@ -169,7 +159,7 @@
     <!-- Footer -->
 
 	<footer class="footer">
-		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/footer_1.jpg' %}" data-speed="0.8"></div>
+		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/register_skydive.png' %}" data-speed="0.8"></div>
 		<div class="container">
 			<div class="row">
 				<div class="col">

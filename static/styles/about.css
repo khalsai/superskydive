@@ -642,8 +642,8 @@ section
 {
 	position: absolute;
 	top: -339px;
-	width: calc(100% + 122px);
-	left: -61px;
+	width: calc(80%);
+	left: 100px;
 	padding-top: 47px;
 	padding-left: 61px;
 	padding-right: 61px;
@@ -698,7 +698,7 @@ section
 }
 .search_input_3
 {
-	width: 15%;
+	width: 100%;
 }
 .search_input_4
 {
