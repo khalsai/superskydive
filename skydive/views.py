@@ -1,4 +1,8 @@
+from datetime import datetime
+
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned
+from django.forms import formset_factory
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User, auth
 from django.shortcuts import render, redirect
@@ -143,3 +147,43 @@ def logout(request):
     auth.logout(request)
     # messages.info(request, "You have successfully logged out.")
     return redirect('..')
+
+
+@login_required(login_url='/skydive/login')
+def booking(request, dest_id):
+    passengerformset = formset_factory(PassengerForm, extra=1)
+    if request.method == 'POST':
+        formset = passengerformset(request.POST)
+        if formset.is_valid():
+            # selected_item_id = int(request.GET.get('desc_id'))
+            date_selected = datetime.strptime(request.POST['booking_date'], "%Y-%m-%d").date()
+            loc_desc = Destination_desc.objects.get(dest_id=dest_id)
+            user = request.user
+            total_fare = formset.total_form_count() * loc_desc.price
+            # request.session['n'] = formset.total_form_count()
+            booking_item = Booking.objects.create(user=user, booking_date=date_selected, total_fare=total_fare,
+                                                  type_skydive=loc_desc.type_skydive, destination_desc=loc_desc)
+            for i in range(0, formset.total_form_count()):
+                form = formset.forms[i]
+                passenger_detail = Passenger(first_name=form.cleaned_data['first_name'],
+                                             last_name=form.cleaned_data['last_name'],
+                                             age=form.cleaned_data['age'])
+                passenger_detail.save()
+
+                booking_item.passengers.add(passenger_detail)
+                # booking_item = Booking(user=user, passengers=passenger_detail,
+                #                       booking_date=date_selected, total_fare=total_fare,
+                #                       type_skydive=loc_desc.type_skydive, destination_desc=loc_desc
+                #                       )
+            booking_item.save()
+
+            HST = total_fare * 0.18
+            HST = float("{:.2f}".format(HST))
+            final_total = HST + total_fare
+            return render(request, 'skydive/payment.html', {'person_count': formset.total_form_count(),
+                                                            'total_fare': total_fare, 'HST': HST,
+                                                            'final_total': final_total, 'province': loc_desc.province,
+                                                            'bookingid': booking_item.booking_id})
+    else:
+        formset = passengerformset()
+        return render(request, 'skydive/booking.html', {'formset': formset, 'dest_id': dest_id})

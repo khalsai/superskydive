@@ -21,4 +21,6 @@ urlpatterns = [
     path('skydive/search', views.search, name='search'),
     path('skydive/search/<str:destination>', views.search_loc, name='search_loc'),
     path('skydive/search/<str:skydive_type>/<int:desc_id>', views.type_skydive, name='type_skydive'),
+    path('skydive/booking/<int:dest_id>/', views.booking, name='booking'),
+    path('skydive/payment/<int:dest_id>', views.booking, name='payment'),
 ]

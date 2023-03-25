@@ -19,3 +19,8 @@ class NewUserForm(forms.Form):
     class Meta:
         model = User
         fields = ("username", "email", "first_name", "last_name", "password", "password_repeat")
+
+class PassengerForm(forms.ModelForm):
+    class Meta:
+        model = Passenger
+        fields = '__all__'

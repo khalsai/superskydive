@@ -40,3 +40,51 @@ class Destination_desc(models.Model):
 
     def __str__(self):
         return self.province + "-" + self.type_skydive
+
+
+class Passenger(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    age = models.IntegerField(default=18)
+
+
+class Cards(models.Model):
+    Card_number = models.CharField(primary_key=True, max_length=16)
+    Ex_month = models.CharField(max_length=2)
+    Ex_Year = models.CharField(max_length=2)
+    CVV = models.CharField(max_length=3)
+    Balance = models.CharField(max_length=8)
+
+
+class Transactions(models.Model):
+    Transactions_ID = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=10)
+    Amount = models.CharField(max_length=8)
+    Status = models.CharField(default="Failed", max_length=15)
+    Payment_method = models.CharField(blank=True, max_length=15)
+    Date_Time = models.CharField(default=datetime.now, max_length=19)
+
+
+class Reservation(models.Model):
+    """ Reservation representing single date and total/available spots for day """
+    date_available = models.DateField(null=False, blank=False)
+    spots_total = models.IntegerField(null=True, default=50)
+    spots_free = models.IntegerField(null=True, default=50)
+    destination = models.ForeignKey(Destination, related_name="destin", on_delete=models.CASCADE)
+    type_skydive = models.CharField(max_length=50, choices=SKYDIVE_TYPE, default='tandemskydive')
+
+    def __str__(self):
+        return str(self.date_available) + "Total:" + str(self.spots_total) + "Free:" + str(self.spots_free)
+
+
+class Booking(models.Model):
+    booking_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings", blank=True, null=True)
+    passengers = models.ManyToManyField(Passenger, related_name="skydive_tickets")
+    booking_date = models.DateField(default=datetime.now, blank=True, null=True)
+    total_fare = models.FloatField(blank=True, null=True)
+    type_skydive = models.CharField(max_length=50, choices=SKYDIVE_TYPE)
+    destination_desc = models.ForeignKey(Destination_desc, related_name="dest", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.booking_id
