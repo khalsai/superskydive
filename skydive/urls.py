@@ -18,4 +18,7 @@ urlpatterns = [
     path('skydive/password-reset-complete/',
          auth_views.PasswordResetCompleteView.as_view(template_name='skydive/password_reset_complete.html'),
          name='password_reset_complete'),
+    path('skydive/search', views.search, name='search'),
+    path('skydive/search/<str:destination>', views.search_loc, name='search_loc'),
+    path('skydive/search/<str:skydive_type>/<int:desc_id>', views.type_skydive, name='type_skydive'),
 ]
