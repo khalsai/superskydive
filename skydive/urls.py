@@ -10,7 +10,7 @@ app_name = 'skydive'
 urlpatterns = [
     path("", views.index, name="index"),
     path('skydive/login', views.login, name='login'),
-    path('skydive/register', views.register, name='register'),
+    path('skydive/register', views.Register.as_view(), name='register'),
     path('skydive/logout', views.logout, name='logout'),
     path('skydive/reset', ResetPasswordView.as_view(), name='reset'),
     path('skydive/password-reset-confirm/<uidb64>/<token>/',
