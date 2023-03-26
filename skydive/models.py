@@ -88,3 +88,16 @@ class Booking(models.Model):
 
     def __str__(self):
         return self.booking_id
+
+
+class Applicant(models.Model):
+    first_name= models.CharField(max_length=50)
+    last_name= models.CharField(max_length=50)
+    phone= models.CharField(max_length=10)
+    email= models.EmailField()
+    resume= models.FileField(upload_to="applicants/resume/", null=True, default=None)
+    cover_letter= models.FileField(upload_to="applicants/cover_letter/", null=True, default=None)
+    comments= models.TextField(blank=True)
+
+    def __str__(self):
+        return self.email

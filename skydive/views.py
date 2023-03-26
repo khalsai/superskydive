@@ -7,12 +7,12 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User, auth
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import NewUserForm
+from .forms import NewUserForm, ApplicantForm
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-
-from .models import Destination, Destination_desc
+from django.views import View
+from .models import Destination, Destination_desc, Applicant
 
 
 # Create your views here.
@@ -187,3 +187,38 @@ def booking(request, dest_id):
     else:
         formset = passengerformset()
         return render(request, 'skydive/booking.html', {'formset': formset, 'dest_id': dest_id})
+
+
+def about(request):
+    return render(request, 'skydive/about.html')
+
+
+class JoinUs(View):
+
+    def get(self, request):
+        form= ApplicantForm()
+        return render(request, 'skydive/join_us.html', {'form': form})
+
+    def post(self, request):
+        form=ApplicantForm(request.POST, request.FILES)
+        print(form.is_valid())
+        if form.is_valid():
+            if(Applicant.objects.filter(email=form.cleaned_data['email']).exists()):
+                messages.error(request, 'You have already applied')
+                return redirect('skydive:joinus')
+            applicant= Applicant.objects.create(
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                phone=form.cleaned_data['phone'],
+                email=form.cleaned_data['email'],
+                resume=form.cleaned_data['resume'],
+                cover_letter=form.cleaned_data['cover_letter'],
+                comments=form.cleaned_data['comments']
+            )
+            applicant.save()
+            messages.success(request, 'Application Successful Submitted')
+            return redirect('skydive:joinus')
+        else:
+            print(form.errors)
+            messages.error(request, 'Invalid data')
+            return redirect('skydive:joinus')

@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from django.db import models
 
-from .models import Destination_desc, Destination, Booking, Passenger, Cards, Transactions, Reservation
+from .models import *
 
 admin.site.register(Destination)
 admin.site.register(Destination_desc)
@@ -13,3 +13,4 @@ admin.site.register(Passenger)
 admin.site.register(Cards)
 admin.site.register(Transactions)
 admin.site.register(Reservation)
+admin.site.register(Applicant)

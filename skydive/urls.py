@@ -1,6 +1,8 @@
 from django.urls import path, reverse_lazy
 from . import views
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 from .views import ResetPasswordView
 
@@ -23,4 +25,9 @@ urlpatterns = [
     path('skydive/search/<str:skydive_type>/<int:desc_id>', views.type_skydive, name='type_skydive'),
     path('skydive/booking/<int:dest_id>/', views.booking, name='booking'),
     path('skydive/payment/<int:dest_id>', views.booking, name='payment'),
+    path('skydive/about', views.about, name='about'),
+    path('skydive/joinus', views.JoinUs.as_view(), name='joinus'),
 ]
+
+if settings.DEBUG:
+    urlpatterns+=static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
