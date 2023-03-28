@@ -71,7 +71,9 @@
                             <p>{{ loc_desc.desc }} </p>
                             <p><b>{{ loc_desc.curr| upper }} {{ loc_desc.price }}</b></p>
                             <a href="{% url 'skydive:booking' loc_desc.dest_id %}"><button class="btn btn-success">Book Now</button></a>
+                            {% for avail in available_list %}
                             <div class="row">
+                            {% if loc_desc.type_skydive == avail.type_skydive %}
                                 <div class="cell">
                                     {{ available_list.date_available }}
                                 </div>
@@ -87,7 +89,9 @@
                                        <p> No spots available</p>
                                     </div>
                                 {% endif %}
+                            {% endif %}
                             </div>
+                                {% endfor %}
                         </div>
                      </div>
             </div>

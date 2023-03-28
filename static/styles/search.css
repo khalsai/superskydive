@@ -5,8 +5,9 @@ body{
     color: grey;
 }
 #sidebar{
+    padding-top: 29px;
     width: 20%;
-    padding: 10px;
+    padding-left:  19px;
     margin: 0;
     float: left;
 }
@@ -57,7 +58,7 @@ li a:hover{
 
     .card-img-top{
         width: 400px;
-        height: 350px;
+        height: 259px;
         object-fit: cover;
 
 
@@ -111,8 +112,9 @@ li a:hover{
         padding-left: 10px;
     }
     #sidebar{
+        padding-top: 29px;
         width: 100%;
-        padding: 10px;
+        padding-left: 19px;
         margin: 0;
         float: left;
     }
