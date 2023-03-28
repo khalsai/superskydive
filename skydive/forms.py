@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Passenger, Applicant
+from .models import Passenger, Applicant, Subscriber
 
 
 class NewUserForm(forms.Form):
@@ -21,6 +21,7 @@ class NewUserForm(forms.Form):
         model = User
         fields = ("username", "email", "first_name", "last_name", "password", "password_repeat")
 
+
 class PassengerForm(forms.ModelForm):
     class Meta:
         model = Passenger
@@ -29,9 +30,9 @@ class PassengerForm(forms.ModelForm):
 
 class ApplicantForm(forms.ModelForm):
     class Meta:
-        model= Applicant
-        fields=['first_name', 'last_name', 'phone', 'email', 'resume', 'cover_letter', 'comments']
-        labels={
+        model = Applicant
+        fields = ['first_name', 'last_name', 'phone', 'email', 'resume', 'cover_letter', 'comments']
+        labels = {
             'first_name': 'First Name',
             'last_name': 'Last Name',
             'phone': 'Phone No.',
@@ -40,3 +41,9 @@ class ApplicantForm(forms.ModelForm):
             'cover_letter': 'Cover Letter',
             'comments': 'Additional Comments'
         }
+
+
+class SubscribeForm(forms.ModelForm):
+    class Meta:
+        model = Subscriber
+        fields = ('email',)

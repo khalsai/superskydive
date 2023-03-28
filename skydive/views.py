@@ -1,18 +1,23 @@
+import random
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned
+from django.core.mail import send_mail
 from django.forms import formset_factory
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User, auth
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import NewUserForm, ApplicantForm
+from django.views.decorators.csrf import csrf_exempt
+
+from .forms import NewUserForm, ApplicantForm, PassengerForm, SubscribeForm
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views import View
-from .models import Destination, Destination_desc, Applicant
+from .models import Destination, Destination_desc, Applicant, Booking, Cards, Transactions, Passenger, Reservation
 
 
 # Create your views here.
@@ -28,8 +33,9 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     success_url = reverse_lazy('skydive:login')
 
 
-class Reservation:
-    pass
+def index(request):
+    loc_list = Destination.objects.all()
+    return render(request, "index.html", {'loc_list': loc_list})
 
 
 def search(request):
@@ -68,7 +74,7 @@ def search(request):
 def search_loc(request, destination):
     loc_desc_list = Destination_desc.objects.filter(province=destination)
     loc_list = Destination.objects.all()
-    available_list = Reservation.objects.all()
+    available_list = Reservation.objects.filter(destination__province=destination)
     return render(request, 'skydive/search.html', {'loc_desc_list': loc_desc_list, 'loc_list': loc_list,
                                                    'available_list': available_list, 'search_item': 'province'})
 
@@ -85,10 +91,6 @@ def type_skydive(request, skydive_type, desc_id):
         print(err)
         return render(request, 'skydive/search.html', {'loc_desc_list': loc_desc_list, 'loc_list': loc_list,
                                                        'search_item': 'type_skydive'})
-
-
-def index(request):
-    return render(request, "index.html")
 
 
 def login(request):
@@ -142,9 +144,10 @@ def booking(request, dest_id):
                 #                       )
             booking_item.save()
 
-            HST = total_fare * 0.18
+            HST = total_fare * 0.13
             HST = float("{:.2f}".format(HST))
             final_total = HST + total_fare
+            request.session['pay_amount'] = final_total
             return render(request, 'skydive/payment.html', {'person_count': formset.total_form_count(),
                                                             'total_fare': total_fare, 'HST': HST,
                                                             'final_total': final_total, 'province': loc_desc.province,
@@ -161,17 +164,17 @@ def about(request):
 class JoinUs(View):
 
     def get(self, request):
-        form= ApplicantForm()
+        form = ApplicantForm()
         return render(request, 'skydive/join_us.html', {'form': form})
 
     def post(self, request):
-        form=ApplicantForm(request.POST, request.FILES)
+        form = ApplicantForm(request.POST, request.FILES)
         print(form.is_valid())
         if form.is_valid():
-            if(Applicant.objects.filter(email=form.cleaned_data['email']).exists()):
+            if (Applicant.objects.filter(email=form.cleaned_data['email']).exists()):
                 messages.error(request, 'You have already applied')
                 return redirect('skydive:joinus')
-            applicant= Applicant.objects.create(
+            applicant = Applicant.objects.create(
                 first_name=form.cleaned_data['first_name'],
                 last_name=form.cleaned_data['last_name'],
                 phone=form.cleaned_data['phone'],
@@ -223,3 +226,116 @@ class Register(View):
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
             return redirect('register')
+
+
+@login_required(login_url='/skydive/login')
+def card_payment(request, booking_id):
+    card_no = request.POST.get('card_number')
+    pay_method = 'Debit card'
+    mm = request.POST['MM']
+    yy = request.POST['YY']
+    cvv = request.POST['cvv']
+
+    request.session['dcard'] = card_no
+    try:
+        balance = Cards.objects.get(Card_number=card_no, Ex_month=mm, Ex_Year=yy, CVV=cvv).Balance
+        request.session['total_balance'] = balance
+        # mail1 = Cards.objects.get(Card_number=card_no, Ex_month=mm, Ex_Year=yy, CVV=cvv).email
+
+        if int(balance) >= int(request.session['pay_amount']):
+            rno = random.randint(100000, 999999)
+            request.session['OTP'] = rno
+
+            amt = request.session['pay_amount']
+            user = request.user
+            # print(username)
+            # user = User.objects.get(username=username)
+            mail_id = user.email
+            print([mail_id])
+            msg = 'Your OTP For Payment of ₹' + str(amt) + ' is ' + str(rno)
+            # print(msg)
+            # print([mail_id])
+            # print(amt)
+            send_mail('OTP for Debit card Payment',
+                      msg,
+                      'test@gmail.com',
+                      [mail_id],
+                      fail_silently=False)
+            return render(request, 'skydive/OTP.html')
+        error_message = 'Payment failed. Your booking has been deleted.'
+        return render(request, 'skydive/wronginfo.html', {'error_message': error_message})
+
+    except:
+        booking = get_object_or_404(Booking, pk=booking_id)
+        booking.delete()
+        error_message = 'Payment failed. Your booking has been deleted.'
+        return render(request, 'skydive/wronginfo.html', {'error_message': error_message})
+
+
+@login_required(login_url='/skydive/login')
+def otp_verification(request):
+    otp1 = int(request.POST['otp'])
+    username = request.user.get_username()
+    amt = int(request.session['pay_amount'])
+    pay_method = 'Debit card'
+    if otp1 == int(request.session['OTP']):
+        del request.session["OTP"]
+        total_balance = int(request.session['total_balance'])
+        rem_balance = int(total_balance - int(request.session["pay_amount"]))
+        c = Cards.objects.get(Card_number=request.session['dcard'])
+        c.Balance = rem_balance
+        c.save(update_fields=['Balance'])
+        c.save()
+        t = Transactions(username=username, Amount=amt, Payment_method=pay_method,
+                         Status='Success')
+        t.save()
+
+        return render(request, 'skydive/confirmation_page.html')
+    else:
+        t = Transactions(username=username, Amount=amt, Payment_method=pay_method, Status='Failed')
+        t.save()
+        return render(request, 'skydive/wrong_OTP.html')
+
+
+@login_required(login_url='/skydive/login')
+def mybookings(request):
+    user = request.user
+    booking_list = Booking.objects.filter(user=user)
+    return render(request, 'skydive/mybookings.html', {'booking_list': booking_list})
+
+
+@csrf_exempt
+def cancel_booking(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            ref = request.POST['ref']
+            print(ref)
+            try:
+                book = Booking.objects.get(booking_id=ref)
+                if book.user == request.user:
+                    book.status = 'cancelled'
+                    book.save()
+
+                    return JsonResponse({'success': True})
+                else:
+                    return JsonResponse({
+                        'success': False,
+                        'error': "User unauthorised"
+                    })
+            except Exception as e:
+                return JsonResponse({
+                    'success': False,
+                    'error': e
+                })
+        else:
+            return HttpResponse("User unauthorised")
+    else:
+        return HttpResponse("Method must be POST.")
+
+
+def subscribe(request):
+    if request.method == 'POST':
+        form = SubscribeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, 'skydive/subscribe_success.html')

@@ -25,9 +25,14 @@ urlpatterns = [
     path('skydive/search/<str:skydive_type>/<int:desc_id>', views.type_skydive, name='type_skydive'),
     path('skydive/booking/<int:dest_id>/', views.booking, name='booking'),
     path('skydive/payment/<int:dest_id>', views.booking, name='payment'),
+    path('skydive/card_payment/<int:booking_id>', views.card_payment, name='card_payment'),
+    path('skydive/otp_verification', views.otp_verification, name='otp_verification'),
+    path('skydive/mybookings', views.mybookings, name='mybookings'),
+    path('skydive/cancelbooking', views.cancel_booking, name="cancelbooking"),
     path('skydive/about', views.about, name='about'),
     path('skydive/joinus', views.JoinUs.as_view(), name='joinus'),
+    path('skydive/subscribe', views.subscribe, name='subscribe'),
 ]
 
 if settings.DEBUG:
-    urlpatterns+=static(settings.MEDIA_URL, document_root= settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

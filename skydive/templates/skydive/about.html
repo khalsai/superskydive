@@ -161,9 +161,9 @@
     <!-- Footer -->
 
 	<footer class="footer">
-		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/login_skydive_1.jpg' %}" data-speed="0.8"></div>
+		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/skydive_footer.jpg' %}" data-speed="0.8"></div>
 		<div class="container">
-			<div class="row">
+			<div class="row" >
 				<div class="col">
 					<div class="newsletter">
 						<div class="newsletter_title_container text-center">
@@ -171,7 +171,7 @@
 							<div class="newsletter_subtitle">Join our database NOW!</div>
 						</div>
 						<div class="newsletter_form_container">
-							<form action="#" class="newsletter_form d-flex flex-md-row flex-column align-items-start justify-content-between" id="newsletter_form">
+							<form method="post" action="{% url 'skydive:subscribe' %}" class="newsletter_form d-flex flex-md-row flex-column align-items-start justify-content-between" id="newsletter_form">
 								<div class="d-flex flex-md-row flex-column align-items-start justify-content-between">
 									<div><input type="text" class="newsletter_input newsletter_input_name" id="newsletter_input_name" placeholder="Name" required="required"><div class="input_border"></div></div>
 									<div><input type="email" class="newsletter_input newsletter_input_email" id="newsletter_input_email" placeholder="Your e-mail" required="required"><div class="input_border"></div></div>

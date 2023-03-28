@@ -34,7 +34,7 @@
 								<ul class="d-flex flex-row align-items-start justify-content-start">
 									<li class="active"><a href="">Home</a></li>
 									<li><a href="skydive/about">About Us</a></li>
-									<li><a href="skydive/news">News</a></li>
+									<li><a href="skydive/mybookings">My Bookings</a></li>
 									<li><a href="skydive/joinus">Join Us</a></li>
 
 									{% if user.is_authenticated %}
@@ -89,7 +89,7 @@
 			<ul>
 				<li class="active"><a href="">Home</a></li>
 				<li><a href="skydive/about">About Us</a></li>
-				<li><a href="skydive/news">News</a></li>
+				<li><a href="skydive/mybookings">My Bookings</a></li>
 				<li><a href="skydive/joinus">Join Us</a></li>
 
 				{% if user.is_authenticated %}
@@ -194,7 +194,8 @@
 					<div class="home_search_container">
 						<div class="home_search_title">Where do you want to skydive in Canada</div>
 						<div class="home_search_content">
-							<form action="#" class="home_search_form" id="home_search_form">
+							<form action="{% url 'skydive:search' %}" class="home_search_form" id="home_search_form" method="POST" >
+								{%csrf_token%}
 								<div class="d-flex flex-lg-row flex-column align-items-start justify-content-lg-between justify-content-start">
 									<input type="text" class="search_input search_input_1" placeholder="Location" required="required">
 									<button class="home_search_button">search</button>
@@ -264,7 +265,7 @@
 			<div class="row">
 				<div class="col text-center">
 					<div class="section_subtitle">simply amazing places</div>
-					<div class="section_title"><h2>Popular Destinations</h2></div>
+					<div class="section_title"><h2>Popular  SkyDive Destinations</h2></div>
 				</div>
 			</div>
 			<div class="row destinations_row">
@@ -273,18 +274,14 @@
 
 						<!-- Destination -->
 						
-						{% for dest in dests %}
+						{% for loc in loc_list %}
 						<div class="destination item">
 							<div class="destination_image">
-								<img src="{{dest.img.url}}" alt="">
-								{% if dest.offer %}
-								<div class="spec_offer text-center"><a href="#">Special Offer</a></div>
-								{% endif %}
+								<img src="{{loc.img.url}}" alt="">
+								
 							</div>
 							<div class="destination_content">
-								<div class="destination_title"><a href="accounts/destinations">{{dest.name}}</a></div>
-								<div class="destination_subtitle"><p>{{dest.desc}}</p></div>
-								<div class="destination_price">From ${{dest.price}}</div>
+								<div class="destination_title"><a href="{% url 'skydive:search_loc' loc.province %}">{{loc.province}}</a></div>
 							</div>
 						</div>
 
@@ -459,7 +456,7 @@
 	<!-- Footer -->
 
 	<footer class="footer">
-		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/footer_1.jpg' %}" data-speed="0.8"></div>
+		<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/skydive_footer.jpg' %}" data-speed="0.8"></div>
 		<div class="container">
 			<div class="row">
 				<div class="col">
@@ -469,7 +466,7 @@
 							<div class="newsletter_subtitle">Join our database NOW!</div>
 						</div>
 						<div class="newsletter_form_container">
-							<form action="#" class="newsletter_form d-flex flex-md-row flex-column align-items-start justify-content-between" id="newsletter_form">
+							<form method="post" action="{% url 'skydive:subscribe' %}" class="newsletter_form d-flex flex-md-row flex-column align-items-start justify-content-between" id="newsletter_form">
 								<div class="d-flex flex-md-row flex-column align-items-start justify-content-between">
 									<div><input type="text" class="newsletter_input newsletter_input_name" id="newsletter_input_name" placeholder="Name" required="required"><div class="input_border"></div></div>
 									<div><input type="email" class="newsletter_input newsletter_input_email" id="newsletter_input_email" placeholder="Your e-mail" required="required"><div class="input_border"></div></div>
@@ -482,7 +479,7 @@
 			</div>
 			<div class="row footer_contact_row">
 				<div class="col-xl-10 offset-xl-1">
-					<div class="row">
+					<div class="row" style="margin-right: -150px">
 
 						<!-- Footer Contact Item -->
 						<div class="col-xl-4 footer_contact_col">
@@ -491,7 +488,7 @@
 								<div class="footer_contact_title">give us a call</div>
 								<div class="footer_contact_list">
 									<ul>
-										<li>Office Landline: +1 519 253 3000 </li>
+										<li>Office Landline: +1 226 975 6391 </li>
 										<li>Mobile: +1 226 975 6391</li>
 									</ul>
 								</div>
@@ -505,7 +502,7 @@
 								<div class="footer_contact_title">come & drop by</div>
 								<div class="footer_contact_list">
 									<ul style="max-width:190px">
-										<li>4124 Barnes Street, Sanford, FL 32771</li>
+										<li>Sunset Univeristy Avenue</li>
 									</ul>
 								</div>
 							</div>

@@ -17,6 +17,11 @@ CURR_TYPE = (
     ('usa', 'USA',),
 )
 
+STATUS = (
+    ('confirmed', 'CONFIRMED'),
+    ('cancelled', 'CANCELLED'),
+)
+
 
 class Destination(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -85,19 +90,36 @@ class Booking(models.Model):
     total_fare = models.FloatField(blank=True, null=True)
     type_skydive = models.CharField(max_length=50, choices=SKYDIVE_TYPE)
     destination_desc = models.ForeignKey(Destination_desc, related_name="dest", on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS, default='cancelled')
 
     def __str__(self):
         return self.booking_id
 
 
+class NetBanking(models.Model):
+    Username = models.CharField(primary_key=True, max_length=16)
+    Password = models.CharField(max_length=14)
+    Bank = models.CharField(max_length=25)
+    Balance = models.CharField(max_length=9)
+
+
 class Applicant(models.Model):
-    first_name= models.CharField(max_length=50)
-    last_name= models.CharField(max_length=50)
-    phone= models.CharField(max_length=10)
-    email= models.EmailField()
-    resume= models.FileField(upload_to="applicants/resume/", null=True, default=None)
-    cover_letter= models.FileField(upload_to="applicants/cover_letter/", null=True, default=None)
-    comments= models.TextField(blank=True)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    phone = models.CharField(max_length=10)
+    email = models.EmailField()
+    resume = models.FileField(upload_to="applicants/resume/", null=True, default=None)
+    cover_letter = models.FileField(upload_to="applicants/cover_letter/", null=True, default=None)
+    comments = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.email
+
+
+class Subscriber(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    date_subscribed = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.email
