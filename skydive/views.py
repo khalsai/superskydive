@@ -203,13 +203,13 @@ class Register(View):
         if form.is_valid():
             if User.objects.filter(username=form.cleaned_data['username']).exists():
                 messages.error(request, "Username already exists.")
-                return redirect('register')
+                return redirect('skydive:register')
             elif User.objects.filter(email=form.cleaned_data['email']).exists():
                 messages.error(request, "Email already exists.")
-                return redirect('register')
+                return redirect('skydive:register')
             elif form.cleaned_data['password'] != form.cleaned_data['password_repeat']:
                 messages.error(request, "Passwords do not match.")
-                return redirect('register')
+                return redirect('skydive:register')
             else:
                 user = User.objects.create_user(
                     form.cleaned_data['username'],
@@ -222,10 +222,10 @@ class Register(View):
                 user = user.save()
                 login(request, user)
                 messages.success(request, "Registration successful.")
-                return redirect('login')
+                return redirect('skydive:login')
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
-            return redirect('register')
+            return redirect('skydive:register')
 
 
 @login_required(login_url='/skydive/login')

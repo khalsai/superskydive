@@ -197,10 +197,16 @@
 							<form action="{% url 'skydive:search' %}" class="home_search_form" id="home_search_form" method="POST" >
 								{%csrf_token%}
 								<div class="d-flex flex-lg-row flex-column align-items-start justify-content-lg-between justify-content-start">
-									<input type="text" class="search_input search_input_1" placeholder="Location" required="required">
+									<input type="text" class="search_input search_input_1" placeholder="Location" required="required" name="place">
 									<button class="home_search_button">search</button>
 								</div>
 							</form>
+
+                            <div>
+                                    {% for message in messages %}
+                                    <h4 style="color: red;">{{message}}</h4>
+                                    {% endfor %}
+                            </div>
 						</div>
 					</div>
 				</div>
