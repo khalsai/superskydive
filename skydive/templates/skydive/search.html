@@ -109,45 +109,68 @@
     <div class="container mt-5">
         {% for loc_desc in loc_desc_list %}
 
-          <div class="card mt-4">
+          <div class="card mt-4" style="margin-bottom: 50px">
                <div class="row">
                      <div class="col-md-4">
                          <!--Card image-->
                           <img src={{ loc_desc.img_destin.url }} class="card-img-top">
                      </div>
                      <div class="col-md-8">
-                        <div class="card-body">
+                        <div class="card-body" style="padding-left: 105px">
                             <h3 class="card-title mt-3"> {{ loc_desc.province }}</h3>
                             <p>{{ loc_desc.desc }} </p>
 
-                        
+
                             <p><b>{{ loc_desc.curr| upper }} {{ loc_desc.price }}</b></p>
                             <a href="{% url 'skydive:booking' loc_desc.dest_id %}"><button class="btn btn-success">Book Now</button></a>
-                            {% for avail in available_list %}
+                         {% for avail in available_list %}
+                            {% if search_item == 'province' %}
                             <div class="row">
-                            {% if loc_desc.type_skydive == avail.type_skydive  %}
-                                <div class="col-4">
-
-                                <p>{{ avail.date_available }} </p>
-                                </div>
+                            {% if loc_desc.type_skydive == avail.type_skydive %}
+                                 <div class="col-4">
+                                     <p>{{ avail.date_available }} </p>
+                                 </div>
                                 <div class="col-3">
-                                <p>{{ avail.spots_free }} spots </p>
+                                     <p>{{ avail.spots_free }} spots </p>
                                 </div>
                                 {% if avail.spots_free > 0 %}
-                                 <div class="col-3">
-                                 <p> Available</p>
-                                 </div>
+                                    <div class="col-3">
+                                           <p> Available</p>
+                                    </div>
 
                                  {% else %}
                                     <div class="col-3">
                                      <p> No spots available</p>
                                     </div>
-
                                 {% endif %}
                             {% endif %}
                             </div>
-                                {% endfor %}
+
+                        {% elif search_item == 'type_skydive' %}
+                           <div class="row">
+                            {% if loc_desc.type_skydive == avail.type_skydive and loc_desc.province == avail.destination.province %}
+                                <div class="col-4">
+                                     <p>{{ avail.date_available }} </p>
+                                 </div>
+                                <div class="col-3">
+                                     <p>{{ avail.spots_free }} spots </p>
+                                </div>
+                                {% if avail.spots_free > 0 %}
+                                    <div class="col-3">
+                                           <p> Available</p>
+                                    </div>
+
+                                 {% else %}
+                                    <div class="col-3">
+                                     <p> No spots available</p>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                           </div>
+                        {% endif %}
+                        {% endfor %}
                         </div>
+
                      </div>
             </div>
         </div>

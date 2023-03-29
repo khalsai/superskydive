@@ -83,7 +83,7 @@ def type_skydive(request, skydive_type, desc_id):
     try:
         loc_desc_list = Destination_desc.objects.filter(type_skydive=skydive_type)
         loc_list = Destination.objects.all()
-        available_list = Reservation.objects.filter()
+        available_list = Reservation.objects.filter(type_skydive=skydive_type)
         print(skydive_type)
         return render(request, 'skydive/search.html', {'loc_desc_list': loc_desc_list, 'loc_list': loc_list,
                                                        'available_list': available_list, 'search_item': 'type_skydive'})
