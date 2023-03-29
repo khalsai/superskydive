@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="superskydive template project">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css' %}">
     <link href="{% static 'plugins/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/owl.carousel.css' %}">
@@ -23,60 +24,51 @@
 	
         <!-- Header -->
     
-        <header class="header">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="header_content d-flex flex-row align-items-center justify-content-start">
-                            <div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
-                                <div class="logo"><a href="..">Super SkyDive</a></div>
-                                <nav class="main_nav">
-                                    <ul class="d-flex flex-row align-items-start justify-content-start">
-                                        <li><a href="..">Home</a></li>
-                                        <li><a href="{% url 'skydive:about' %}">About Us</a></li>
-                                        <li><a href="{% url 'skydive:mybookings' %}">My Bookings</a></li>
-                                        <li><a href="{% url 'skydive:joinus' %}">Join Us</a></li>
-    
-                                        {% if user.is_authenticated %}
-                                            <li><a href="{% url 'skydive:logout' %}">Logout</a></li>
-                                        {% else %}
-                                            <li><a href="{% url 'skydive:register' %}">Register</a></li>
-                                            <li class="active"><a href="{% url 'skydive:login' %}">Login</a></li>
-                                        {% endif %}
-                                    </ul>
-                                </nav>
-                                {% if user.is_authenticated %}
-                                    <div class="header_phone ml-auto">Welcome, {{user.first_name}}</div>
-                                {% else %}
-                                    <div class="header_phone ml-auto">
-                                        <a style="color: white; font-size:xx-large;" href="https://www.instagram.com/skydiving_gear_canada/?igshid=YmMyMTA2M2Y%3D" target="_blank">
-                                            <i class="fa fa-instagram" aria-hidden="false"></i>
-                                        </a>
-                                    </div>
-                                {% endif %}
-    
-                                <!-- Hamburger -->
-    
-                                <div class="hamburger ml-auto">
-                                    <i class="fa fa-bars" aria-hidden="true"></i>
-                                </div>
-    
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="header_social d-flex flex-row align-items-center justify-content-start">
-                <ul class="d-flex flex-row align-items-start justify-content-start">
-                    <li><a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a></li>
-                    <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-                    <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-                    <li><a href="#"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
-                    <li><a href="#"><i class="fa fa-behance" aria-hidden="true"></i></a></li>
-                    <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
-                </ul>
-            </div>
-        </header>
+       <header class="header">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="header_content d-flex flex-row align-items-center justify-content-start">
+						<div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
+							<div class="logo"><a href="">Super SkyDive</a></div>
+							<nav class="main_nav">
+								<ul class="d-flex flex-row align-items-start justify-content-start">
+									<li class="active"><a href="">Home</a></li>
+									<li><a href="{%url 'skydive:about'  %}">About Us</a></li>
+									<li><a href="{%url 'skydive:mybookings'  %}">My Bookings</a></li>
+									<li><a href="{%url 'skydive:joinus'  %}">Join Us</a></li>
+
+									{% if user.is_authenticated %}
+										<li><a href="{%url 'skydive:logout'  %}">Logout</a></li>
+									{% else %}
+										<li><a href="{%url 'skydive:register'  %}">Register</a></li>
+										<li><a href="{%url 'skydive:login'  %}">Login</a></li>
+									{% endif %}
+								</ul>
+							</nav>
+							{% if user.is_authenticated %}
+								<div class="header_phone ml-auto">Welcome, {{user.username }}</div>
+							{% else %}
+								<div class="header_phone ml-auto">
+									<a style="color: white; font-size:xx-large;" href="https://www.instagram.com/skydiving_gear_canada/?igshid=YmMyMTA2M2Y%3D" target="_blank">
+										<i class="fa fa-instagram" aria-hidden="false"></i>
+									</a>
+								</div>
+							{% endif %}
+
+							<!-- Hamburger -->
+
+							<div class="hamburger ml-auto">
+								<i class="fa fa-bars" aria-hidden="true"></i>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</header>
     
         <!-- Menu -->
     
@@ -181,7 +173,7 @@
 			</div>
 		</div>
 		<div style="background-color: black;" class="col text-center"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="" target="_blank">Inderjeet</a>
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --> </div>
 
     </footer>
