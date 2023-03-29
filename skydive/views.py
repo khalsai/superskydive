@@ -4,6 +4,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.forms import formset_factory
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404
@@ -142,7 +143,15 @@ def booking(request, dest_id):
                 #                       booking_date=date_selected, total_fare=total_fare,
                 #                       type_skydive=loc_desc.type_skydive, destination_desc=loc_desc
                 #                       )
+            booking_item.status = 'confirmed'
             booking_item.save()
+            print("date", date_selected)
+            print("type_skydive", type_skydive)
+            reservation = Reservation.objects.get(
+                Q(destination__province=loc_desc.province) & Q(type_skydive=loc_desc.type_skydive) & Q(
+                    date_available=date_selected))
+            reservation.spots_free = reservation.spots_total - formset.total_form_count()
+            reservation.save(update_fields=["spots_free"])
 
             HST = total_fare * 0.13
             HST = float("{:.2f}".format(HST))
@@ -152,9 +161,18 @@ def booking(request, dest_id):
                                                             'total_fare': total_fare, 'HST': HST,
                                                             'final_total': final_total, 'province': loc_desc.province,
                                                             'bookingid': booking_item.booking_id})
+        else:
+            messages.error(request, "Data filled in form is Invalid. Check for age limit")
+            formset = passengerformset()
+            return render(request, 'skydive/booking.html', {'formset': formset, 'dest_id': dest_id})
+
     else:
+        destin = Destination_desc.objects.get(dest_id=dest_id)
+        list_reserv = Reservation.objects.filter(
+            Q(destination__province=destin.province) & Q(type_skydive=destin.type_skydive))
         formset = passengerformset()
-        return render(request, 'skydive/booking.html', {'formset': formset, 'dest_id': dest_id})
+        return render(request, 'skydive/booking.html',
+                      {'formset': formset, 'dest_id': dest_id, 'list_reserv': list_reserv})
 
 
 def about(request):
@@ -235,10 +253,11 @@ def card_payment(request, booking_id):
     mm = request.POST['MM']
     yy = request.POST['YY']
     cvv = request.POST['cvv']
-
+    print("mm yy cvv", mm, yy, cvv)
     request.session['dcard'] = card_no
     try:
         balance = Cards.objects.get(Card_number=card_no, Ex_month=mm, Ex_Year=yy, CVV=cvv).Balance
+        print("balance", balance)
         request.session['total_balance'] = balance
         # mail1 = Cards.objects.get(Card_number=card_no, Ex_month=mm, Ex_Year=yy, CVV=cvv).email
 
@@ -267,7 +286,12 @@ def card_payment(request, booking_id):
 
     except:
         booking = get_object_or_404(Booking, pk=booking_id)
+        reservation = Reservation.objects.get(Q(destination__province=booking.destination_desc.province) &
+                                              Q(type_skydive=booking.type_skydive) &
+                                              Q(date_available=booking.booking_date))
+        reservation.spots_free = reservation.spots_free + booking.passengers.count()
         booking.delete()
+        reservation.save(update_fields=["spots_free"])
         error_message = 'Payment failed. Your booking has been deleted.'
         return render(request, 'skydive/wronginfo.html', {'error_message': error_message})
 
@@ -312,9 +336,14 @@ def cancel_booking(request):
             print(ref)
             try:
                 book = Booking.objects.get(booking_id=ref)
+                reservation = Reservation.objects.get(Q(destination__province=book.destination_desc.province) &
+                                                      Q(type_skydive=book.type_skydive) &
+                                                      Q(date_available=book.booking_date))
+                reservation.spots_free = reservation.spots_free + booking.passengers.count()
                 if book.user == request.user:
                     book.status = 'cancelled'
                     book.save()
+                    reservation.save(update_fields=["spots_free"])
 
                     return JsonResponse({'success': True})
                 else:

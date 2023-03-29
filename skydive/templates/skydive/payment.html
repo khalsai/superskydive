@@ -136,7 +136,7 @@
 
                               <div class="tab2">
                                  <div class="pay_info">
-                                    <form action="pessanger_detail_def/card_payment" method="POST" class="creditly-card-form agileinfo_form">
+                                    <form action="{% url 'skydive:card_payment' bookingid %}" method="POST" class="creditly-card-form agileinfo_form">
                                          {% csrf_token %}
                                        <section class="creditly-wrapper wthree, w3_agileits_wrapper">
                                           <label>Name On Card</label></br>

@@ -93,7 +93,7 @@ class Booking(models.Model):
     status = models.CharField(max_length=20, choices=STATUS, default='cancelled')
 
     def __str__(self):
-        return self.booking_id
+        return str(self.booking_id)
 
 
 class NetBanking(models.Model):

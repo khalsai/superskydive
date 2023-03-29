@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
+
 from .models import Passenger, Applicant, Subscriber
 
 
@@ -23,6 +25,13 @@ class NewUserForm(forms.Form):
 
 
 class PassengerForm(forms.ModelForm):
+    age = forms.IntegerField(validators=[MinValueValidator(18)])
+
+    def _init_(self, *args, **kwargs):
+        super(PassengerForm, self)._init_(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.required = True
+
     class Meta:
         model = Passenger
         fields = '__all__'
